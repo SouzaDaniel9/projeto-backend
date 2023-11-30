@@ -35,7 +35,8 @@ public class ProdutoService {
 		produtoRepository.deletar(id);
 	}
 
-	public Produto atualizar(Produto p) {
+	public Produto atualizar(Integer id, Produto p) {
+		p.setId(id);
 		return produtoRepository.atualizar(p);
 	}
 }
