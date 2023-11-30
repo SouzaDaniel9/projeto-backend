@@ -1,5 +1,6 @@
 package com.daniel.backendCompleto.controller;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,9 +21,11 @@ import com.daniel.backendCompleto.service.VendedorService;
 @RequestMapping("/vendedores")
 public class VendedorController {
 
+	SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+
 	@Autowired
 	private VendedorService service;
-	
+
 	@GetMapping
 	public List<Vendedor> obterTodos() {
 		return service.obterTodos();
@@ -35,6 +38,7 @@ public class VendedorController {
 
 	@PostMapping
 	public Vendedor adicionarVendedor(@RequestBody Vendedor v) {
+		sdf.format(v.getAniversario());
 		return service.adicionarVendedor(v);
 	}
 
@@ -47,5 +51,5 @@ public class VendedorController {
 	public void atualizarVendedor(@PathVariable Integer id, @RequestBody Vendedor v) {
 		service.atualizarVendedor(id, v);
 	}
-	
+
 }

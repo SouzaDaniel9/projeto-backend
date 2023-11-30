@@ -1,12 +1,12 @@
 package com.daniel.backendCompleto.repository;
 
 import java.util.ArrayList;
-import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Repository;
 
+import com.daniel.backendCompleto.exception.ResourceNotFoundException;
 import com.daniel.backendCompleto.model.Vendedor;
 
 @Repository
@@ -38,11 +38,10 @@ public class VendedorRepository {
 		Optional<Vendedor> vendedorEncontrado = obterPorId(v.getId());
 
 		if (vendedorEncontrado.isEmpty()) {
-			throw new InputMismatchException("Vendedor não encontrado");
+			throw new ResourceNotFoundException("Vendedor não encontrado");
 		}
 
 		deletarUsandoId(v.getId());
 		vendedores.add(v);
 	}
-
 }

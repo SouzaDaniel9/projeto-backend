@@ -1,12 +1,12 @@
 package com.daniel.backendCompleto.repository;
 
 import java.util.ArrayList;
-import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Repository;
 
+import com.daniel.backendCompleto.exception.ResourceNotFoundException;
 import com.daniel.backendCompleto.model.Produto;
 
 @Repository
@@ -42,7 +42,7 @@ public class ProdutoRepository {
 		Optional<Produto> produtoEncontrado = obterPorId(p.getId());
 
 		if (produtoEncontrado.isEmpty()) {
-			throw new InputMismatchException("Produto não encontrado");
+			throw new ResourceNotFoundException("Produto não encontrado");
 		}
 		deletar(p.getId());
 		produtos.add(p);
