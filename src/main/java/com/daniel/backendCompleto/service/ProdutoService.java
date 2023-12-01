@@ -29,33 +29,63 @@ public class ProdutoService {
 
 	// Obtém o produto pelo ID
 	public Optional<ProdutoDTO> obterPorId(Integer id) {
-		//Obtendo optional de produto pelo id
+		// Obtendo optional de produto pelo id
 		Optional<Produto> produtos = produtoRepository.findById(id);
 
 		// Verificando se o id foi encontado no BD
 		if (produtos.isEmpty()) {
 			throw new ResourceNotFoundException("Produto com id " + id + " não foi encontrado");
 		}
-		
-		//Transformando o Optional Produto em ProdutoDTO
+
+		// Transformando o Optional Produto em ProdutoDTO
 		ProdutoDTO dto = new ModelMapper().map(produtos.get(), ProdutoDTO.class);
-		
+
 		return Optional.of(dto);
-		
+
 	}
 
 	// Adiciona um novo produto na lista
-	public ProdutoDTO adicionar(ProdutoDTO produtoDto) {
-		return produtoRepository.save(produtoDto);
+	public ProdutoDTO adicionar(ProdutoDTO produtoDTO) {
+		// Remove o id para conseguir fazer o cadastro
+		produtoDTO.setId(null);
+
+		// Cria um objeto de mapeamento
+		ModelMapper mp = new ModelMapper();
+
+		// Converte o ProdutoDTO em PRoduto
+		Produto produto = mp.map(produtoDTO, Produto.class);
+
+		// Salva o produto do banco
+		produto = produtoRepository.save(produto);
+
+		produtoDTO.setId(produto.getId());
+
+		return produtoDTO;
+
 	}
 
 	// Remove usando o id do produto
 	public void deletar(Integer id) {
+		Optional<Produto> produto = produtoRepository.findById(id);
+
+		if (produto.isEmpty()) {
+			throw new ResourceNotFoundException("Produto com id " + id + " não foi encontrado.");
+		}
+
 		produtoRepository.deleteById(id);
 	}
 
-	public ProdutoDTO atualizar(Integer id, ProdutoDTO produtoDto) {
-		produtoDto.setId(id);
-		return produtoRepository.save(produtoDto);
+	public ProdutoDTO atualizar(Integer id, ProdutoDTO produtoDTO) {
+		// Passar o id para o produtoDTO
+		produtoDTO.setId(id);
+
+		// Criar um objeto de mapeamento e converter ProdutoDTO em Produto
+		Produto produto = new ModelMapper().map(produtoDTO, Produto.class);
+
+		// Atualizar o produto no BD
+		produtoRepository.save(produto);
+
+		// Retornar o produtoDTO atualizado
+		return produtoDTO;
 	}
 }
