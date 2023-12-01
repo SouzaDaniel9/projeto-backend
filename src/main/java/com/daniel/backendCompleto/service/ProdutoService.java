@@ -17,26 +17,26 @@ public class ProdutoService {
 
 	// Obtém a lista inteira de produtos
 	public List<Produto> obterTodosProdutos() {
-		return produtoRepository.obterTodosProdutos();
+		return produtoRepository.findAll();
 	}
 
 	// Obtém o produto pelo ID
 	public Optional<Produto> obterPorId(Integer id) {
-		return produtoRepository.obterPorId(id);
+		return produtoRepository.findById(id);
 	}
 
 	// Adiciona um novo produto na lista
 	public Produto adicionar(Produto p) {
-		return produtoRepository.adicionar(p);
+		return produtoRepository.save(p);
 	}
 
 	// Remove usando o id do produto
 	public void deletar(Integer id) {
-		produtoRepository.deletar(id);
+		produtoRepository.deleteById(id);
 	}
 
 	public Produto atualizar(Integer id, Produto p) {
 		p.setId(id);
-		return produtoRepository.atualizar(p);
+		return produtoRepository.save(p);
 	}
 }

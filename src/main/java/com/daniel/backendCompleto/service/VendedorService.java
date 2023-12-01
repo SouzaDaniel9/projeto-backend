@@ -16,24 +16,24 @@ public class VendedorService {
 	private VendedorRepository repository;
 
 	public List<Vendedor> obterTodos() {
-		return repository.obterTodos();
+		return repository.findAll();
 	}
 
 	public Optional<Vendedor> obterPorId(Integer id) {
-		return repository.obterPorId(id);
+		return repository.findById(id);
 	}
 
 	public Vendedor adicionarVendedor(Vendedor v) {
-		return repository.adicionarVendedor(v);
+		return repository.save(v);
 	}
 
 	public void deletarUsandoId(Integer id) {
-		repository.deletarUsandoId(id);
+		repository.deleteById(id);
 	}
 
 	public void atualizarVendedor(Integer id, Vendedor v) {
 		v.setId(id);
-		repository.atualizarVendedor(id, v);
+		repository.save(v);
 	}
 
 }
