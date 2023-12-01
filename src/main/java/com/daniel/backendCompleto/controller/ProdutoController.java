@@ -18,8 +18,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.daniel.backendCompleto.dto.ProdutoDTO;
-import com.daniel.backendCompleto.model.Produto;
 import com.daniel.backendCompleto.service.ProdutoService;
+import com.daniel.backendCompleto.view.ProdutoRequest;
 import com.daniel.backendCompleto.view.ProdutoResponse;
 
 @RestController
@@ -56,18 +56,32 @@ public class ProdutoController {
 	}
 
 	@PostMapping
-	public Produto novoProduto(@RequestBody Produto p) {
-		return produtoService.adicionar(p);
+	public ResponseEntity<ProdutoResponse> adicionar(@RequestBody ProdutoRequest produtoreq) {
+
+		ModelMapper mp = new ModelMapper();
+		ProdutoDTO produtoDTO = mp.map(produtoreq, ProdutoDTO.class);
+		produtoDTO = produtoService.adicionar(produtoDTO);
+		return new ResponseEntity<>(mp.map(produtoDTO, ProdutoResponse.class), HttpStatus.CREATED);
+
 	}
 
 	@DeleteMapping("/{id}")
-	public String deletar(@PathVariable Integer id) {
+	public ResponseEntity<?> deletar(@PathVariable Integer id) {
 		produtoService.deletar(id);
-		return "Produto com id " + id + " deletado com sucesso.";
+		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}
 
 	@PutMapping("/{id}")
-	public Produto atualizar(@PathVariable Integer id, @RequestBody Produto p) {
-		return produtoService.atualizar(id, p);
+	public ResponseEntity<ProdutoResponse> atualizar(@PathVariable Integer id, @RequestBody ProdutoRequest produtoreq) {
+		ModelMapper mp = new ModelMapper();
+
+		//Verifica se o id passado se encontra na lista
+		if (produtoService.obterPorId(id).isEmpty()) {
+			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+		}
+
+		ProdutoDTO produtoDTO = mp.map(produtoreq, ProdutoDTO.class);
+		produtoDTO = produtoService.atualizar(id, produtoDTO);
+		return new ResponseEntity<>(mp.map(produtoDTO, ProdutoResponse.class), HttpStatus.OK);
 	}
 }
