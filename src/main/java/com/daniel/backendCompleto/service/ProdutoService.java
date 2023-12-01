@@ -2,10 +2,14 @@ package com.daniel.backendCompleto.service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.daniel.backendCompleto.dto.ProdutoDTO;
+import com.daniel.backendCompleto.exception.ResourceNotFoundException;
 import com.daniel.backendCompleto.model.Produto;
 import com.daniel.backendCompleto.repository.ProdutoRepository;
 
@@ -16,18 +20,33 @@ public class ProdutoService {
 	private ProdutoRepository produtoRepository;
 
 	// Obtém a lista inteira de produtos
-	public List<Produto> obterTodosProdutos() {
-		return produtoRepository.findAll();
+	public List<ProdutoDTO> obterTodosProdutos() {
+
+		List<Produto> produtos = produtoRepository.findAll();
+		return produtos.stream().map(produto -> new ModelMapper().map(produto, ProdutoDTO.class))
+				.collect(Collectors.toList());
 	}
 
 	// Obtém o produto pelo ID
-	public Optional<Produto> obterPorId(Integer id) {
-		return produtoRepository.findById(id);
+	public Optional<ProdutoDTO> obterPorId(Integer id) {
+		//Obtendo optional de produto pelo id
+		Optional<Produto> produtos = produtoRepository.findById(id);
+
+		// Verificando se o id foi encontado no BD
+		if (produtos.isEmpty()) {
+			throw new ResourceNotFoundException("Produto com id " + id + " não foi encontrado");
+		}
+		
+		//Transformando o Optional Produto em ProdutoDTO
+		ProdutoDTO dto = new ModelMapper().map(produtos.get(), ProdutoDTO.class);
+		
+		return Optional.of(dto);
+		
 	}
 
 	// Adiciona um novo produto na lista
-	public Produto adicionar(Produto p) {
-		return produtoRepository.save(p);
+	public ProdutoDTO adicionar(ProdutoDTO produtoDto) {
+		return produtoRepository.save(produtoDto);
 	}
 
 	// Remove usando o id do produto
@@ -35,8 +54,8 @@ public class ProdutoService {
 		produtoRepository.deleteById(id);
 	}
 
-	public Produto atualizar(Integer id, Produto p) {
-		p.setId(id);
-		return produtoRepository.save(p);
+	public ProdutoDTO atualizar(Integer id, ProdutoDTO produtoDto) {
+		produtoDto.setId(id);
+		return produtoRepository.save(produtoDto);
 	}
 }
